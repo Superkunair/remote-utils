@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const args = process.argv;
-const severities = process.env.SEVERITY_LIST.split(',') || ['CRITICAL','HIGH'];
+const severities = process.env.SEVERITY_LIST || ['CRITICAL','HIGH'];
 
 if(!args[2]){
     console.error('Dependency file required');
@@ -20,7 +20,7 @@ const getVulnerabilities = (dependenciesObject) => {
     return deps.map(dep => {
         if(dep.vulnerabilities) return dep.vulnerabilities
     }).filter(el => el !== undefined).flat().map(item => ({...item, project}))
-      .filter(vul => severity.includes(vul.severity));    
+      .filter(vul => severities.includes(vul.severity));    
 }
 
 fs.readFile(args[2],(err, data) => {
@@ -30,6 +30,6 @@ fs.readFile(args[2],(err, data) => {
     const filteredData = getVulnerabilities(rawData);
     if(filteredData.length < 1) return process.exit(0);
     console.info('Writting data...')
-    fs.writeFileSync(`./${args[3]}`, filteredData);
+    fs.writeFileSync(`./${args[3]}`, JSON.stringify(filteredData));
     console.log(`Filter done your file is: ${args[3]}`);
 })
