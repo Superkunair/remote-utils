@@ -28,7 +28,6 @@ fs.readFile(args[2],(err, data) => {
     const rawData = JSON.parse(data);
     console.info(`Filtering ${rawData.dependencies.length} elements...`);
     const filteredData = getVulnerabilities(rawData);
-    if(filteredData.length < 1) return process.exit(0);
     console.info('Writting data...')
     fs.writeFileSync(`./${args[3]}`, JSON.stringify(filteredData));
     console.log(`Filter done your file is: ${args[3]}`);
